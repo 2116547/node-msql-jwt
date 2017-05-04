@@ -45,11 +45,12 @@ routes.get('/actors', function(req, res){
 });
 
 //
-// Retourneer één specifieke actor. 
+// Retourneer één specifieke actor. Hier maken we gebruik van URL parameters.
+// Vorm van de URL: http://hostname:3000/api/v1/actors/23
 //
 routes.get('/actors/:id', function(req, res){
 
-	var actorId = req.params.id || -1;
+	var actorId = req.params.id;
 
 	res.contentType('application/json');
 
@@ -57,6 +58,52 @@ routes.get('/actors/:id', function(req, res){
 		if (error) { 
 			res.status(400);
 			res.json({ error: 'Error while performing Query.'});
+		} else {
+			res.status(200);
+			res.json(rows);
+		};
+	});
+});
+
+//
+// Zoek in een gegeven tabel. Je kunt zoeken op attribuut én een zoekwaarde meegeven.
+// we maken hier gebruik van queryparameters.
+// Vorm van de URL: http://hostname:3000/api/v1/search?type=actor&key=first_name&value=JOHN&limit=5
+//
+routes.get('/search', function(req, res){
+
+	var type = req.query.type;
+	var key = req.query.key || '';
+	var value = req.query.value || '';
+	var limit = req.query.limit;
+
+	res.contentType('application/json');
+
+	// 1. type is verplicht. Zonder type kunnen we niet zoeken.
+	if(type === undefined || type === '') {
+		res.status(400);
+		res.json({ error: 'Type is een verplichte parameter.'});
+	}
+
+	// 2. Bouw de query op met de waarden die we hebben.
+	var query = 'SELECT * FROM ' + type;
+
+	// 3. Check of key en value bestaan.
+	if((key !== '') && (value !== '')) {
+		query += ' WHERE \`' + key + '\`=\'' + value + '\'';
+	}
+
+	// 4. Is limit gegeven?
+	if(limit !== undefined) {
+		query += ' LIMIT ' + limit; 
+	}
+
+	console.log('Onze query: ' + query);
+
+	db.query(query, function(error, rows, fields) {
+		if (error) { 
+			res.status(400);
+			res.json(error);
 		} else {
 			res.status(200);
 			res.json(rows);
