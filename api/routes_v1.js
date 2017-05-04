@@ -27,10 +27,33 @@ routes.get('/goodbye', function(req, res){
 	res.json({ 'tekst': 'Goodbye!'});
 });
 
+//
+// Geef een lijst van alle actors. Dat kunnen er veel zijn.
+//
 routes.get('/actors', function(req, res){
 	res.contentType('application/json');
 
 	db.query('SELECT * FROM actor', function(error, rows, fields) {
+		if (error) { 
+			res.status(400);
+			res.json({ error: 'Error while performing Query.'});
+		} else {
+			res.status(200);
+			res.json(rows);
+		};
+	});
+});
+
+//
+// Retourneer één specifieke actor. 
+//
+routes.get('/actors/:id', function(req, res){
+
+	var actorId = req.params.id || -1;
+
+	res.contentType('application/json');
+
+	db.query('SELECT * FROM actor WHERE actor_id=?', [ actorId ], function(error, rows, fields) {
 		if (error) { 
 			res.status(400);
 			res.json({ error: 'Error while performing Query.'});
