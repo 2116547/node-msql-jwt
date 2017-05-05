@@ -86,11 +86,11 @@ routes.get('/search', function(req, res){
 	}
 
 	// 2. Bouw de query op met de waarden die we hebben.
-	var query = 'SELECT * FROM ' + db.escape(type);
+	var query = 'SELECT * FROM \`' + type + '\`';
 
 	// 3. Check of key en value bestaan.
 	if((key !== '') && (value !== '')) {
-		query += ' WHERE \`' + key + '\`=\'' + value + '\'';
+		query += ' WHERE \`' + key + '\`=' + db.escape(value);
 	}
 
 	// 4. Is limit gegeven?
@@ -119,23 +119,26 @@ routes.post('/actors', function(req, res){
 
 	var actor = req.body;
 	var rows = [];
+	var query = {
+		sql: 'INSERT INTO `actor`(first_name, last_name) VALUES (?, ?)', 
+		values: [ actor.first_name, actor.last_name ],
+		timeout: 2000 // 2secs
+	};
 
 	console.dir(actor);
+	console.log('Onze query: ' + query.sql);
 
 	res.contentType('application/json');
-	// db.query('SELECT * FROM actor WHERE actor_id=?', [ actorId ], function(error, rows, fields) {
-	// 	if (error) { 
-	// 		res.status(400);
-	// 		res.json({ error: 'Error while performing Query.'});
-	// 	} else {
+	db.query(query, function(error, rows, fields) {
+		if (error) { 
+			res.status(400);
+			res.json(error);
+		} else {
 			res.status(200);
 			res.json(rows);
-	// 	};
-	// });
+		};
+	});
 });
-
-
-
 
 
 module.exports = routes;
