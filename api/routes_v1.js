@@ -118,7 +118,6 @@ routes.get('/search', function(req, res){
 routes.post('/actors', function(req, res){
 
 	var actor = req.body;
-	var rows = [];
 	var query = {
 		sql: 'INSERT INTO `actor`(first_name, last_name) VALUES (?, ?)', 
 		values: [ actor.first_name, actor.last_name ],
@@ -140,5 +139,66 @@ routes.post('/actors', function(req, res){
 	});
 });
 
+//
+// Wijzig een bestaande actor. De nieuwe info wordt gestuurd via de body van de request message.
+// Er zijn twee manieren om de id van de actor mee te geven: via de request parameters (doen we hier)
+// of als property in de request body.
+// 
+// Vorm van de URL: PUT http://hostname:3000/api/v1/actors/23
+//
+routes.put('/actors/:id', function(req, res){
+
+	var actor = req.body;
+	var actor_id = req.params.id;
+	var query = {
+		sql: 'UPDATE `actor` SET first_name=? , last_name=? WHERE actor_id=?', 
+		values: [ actor.first_name, actor.last_name, actor_id ],
+		timeout: 2000 // 2secs
+	};
+
+	console.dir(actor);
+	console.log('Onze query: ' + query.sql);
+
+	res.contentType('application/json');
+	db.query(query, function(error, rows, fields) {
+		if (error) { 
+			res.status(400);
+			res.json(error);
+		} else {
+			res.status(200);
+			res.json(rows);
+		};
+	});
+});
+
+//
+// Verwijder een bestaande actor.
+// Er zijn twee manieren om de id van de actor mee te geven: via de request parameters (doen we hier)
+// of als property in de request body.
+// 
+// Vorm van de URL: DELETE http://hostname:3000/api/v1/actors/23
+//
+routes.delete('/actors/:id', function(req, res){
+
+	var actor_id = req.params.id;
+	var query = {
+		sql: 'DELETE FROM `actor` WHERE actor_id=?', 
+		values: [ actor_id ],
+		timeout: 2000 // 2secs
+	};
+
+	console.log('Onze query: ' + query.sql);
+
+	res.contentType('application/json');
+	db.query(query, function(error, rows, fields) {
+		if (error) { 
+			res.status(400);
+			res.json(error);
+		} else {
+			res.status(200);
+			res.json(rows);
+		};
+	});
+});
 
 module.exports = routes;
