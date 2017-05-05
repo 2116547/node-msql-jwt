@@ -86,7 +86,7 @@ routes.get('/search', function(req, res){
 	}
 
 	// 2. Bouw de query op met de waarden die we hebben.
-	var query = 'SELECT * FROM ' + type;
+	var query = 'SELECT * FROM ' + db.escape(type);
 
 	// 3. Check of key en value bestaan.
 	if((key !== '') && (value !== '')) {
@@ -110,5 +110,32 @@ routes.get('/search', function(req, res){
 		};
 	});
 });
+
+//
+// Voeg een actor toe. De nieuwe info wordt gestuurd via de body van de request message.
+// Vorm van de URL: POST http://hostname:3000/api/v1/actors
+//
+routes.post('/actors', function(req, res){
+
+	var actor = req.body;
+	var rows = [];
+
+	console.dir(actor);
+
+	res.contentType('application/json');
+	// db.query('SELECT * FROM actor WHERE actor_id=?', [ actorId ], function(error, rows, fields) {
+	// 	if (error) { 
+	// 		res.status(400);
+	// 		res.json({ error: 'Error while performing Query.'});
+	// 	} else {
+			res.status(200);
+			res.json(rows);
+	// 	};
+	// });
+});
+
+
+
+
 
 module.exports = routes;
