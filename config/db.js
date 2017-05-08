@@ -9,7 +9,7 @@ var config = require('../config/config');
 var connection = mysql.createConnection({
   host     : process.env.DB_HOST || config.dbHost,
   user     : process.env.DB_USER || config.dbUser,
-  password : process.env.DB_PASSWORD || config.dbPassword,
+  password : process.env.DB_PASSWORD,
   database : process.env.DB_DATABASE || config.dbDatabase
 });
 

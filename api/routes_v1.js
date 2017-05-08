@@ -35,11 +35,9 @@ routes.get('/actors', function(req, res){
 
 	db.query('SELECT * FROM actor', function(error, rows, fields) {
 		if (error) { 
-			res.status(400);
-			res.json({ error: 'Error while performing Query.'});
+			res.status(400).json(error);
 		} else {
-			res.status(200);
-			res.json(rows);
+			res.status(200).json(rows);
 		};
 	});
 });
@@ -56,11 +54,9 @@ routes.get('/actors/:id', function(req, res){
 
 	db.query('SELECT * FROM actor WHERE actor_id=?', [ actorId ], function(error, rows, fields) {
 		if (error) { 
-			res.status(400);
-			res.json({ error: 'Error while performing Query.'});
+			res.status(400).json(error);
 		} else {
-			res.status(200);
-			res.json(rows);
+			res.status(200).json(rows);
 		};
 	});
 });
@@ -80,7 +76,7 @@ routes.get('/search', function(req, res){
 	res.contentType('application/json');
 
 	// 1. type is verplicht. Zonder type kunnen we niet zoeken.
-	if(type === undefined || type === '') {
+	if(typeof(type) === undefined || type === '') {
 		res.status(400);
 		res.json({ error: 'Type is een verplichte parameter.'});
 	}
@@ -102,11 +98,9 @@ routes.get('/search', function(req, res){
 
 	db.query(query, function(error, rows, fields) {
 		if (error) { 
-			res.status(400);
-			res.json(error);
+			res.status(400).json(error);
 		} else {
-			res.status(200);
-			res.json(rows);
+			res.status(200).json(rows);
 		};
 	});
 });
@@ -130,11 +124,9 @@ routes.post('/actors', function(req, res){
 	res.contentType('application/json');
 	db.query(query, function(error, rows, fields) {
 		if (error) { 
-			res.status(400);
-			res.json(error);
+			res.status(400).json(error);
 		} else {
-			res.status(200);
-			res.json(rows);
+			res.status(200).json(rows);
 		};
 	});
 });
