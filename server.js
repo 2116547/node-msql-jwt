@@ -28,7 +28,7 @@ app.use(logger('dev'));
 // Deze route is de 'preprocessor'.
 // Hier gaan we later bv. testen of de gebruiker ingelogd is.
 // next() zorgt ervoor dat we 'doorvallen' naar de volgende URL.
-router.get('*', function(req, res, next) {
+app.use('*', function(req, res, next) {
     // console.log('aangeroepen.');
     next();
 });
